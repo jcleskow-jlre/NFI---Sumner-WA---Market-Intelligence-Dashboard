@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1" name="viewport"/><title>NFI Sumner Market Intelligence Dashboard</title>
+<link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet"/><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root{--yellow:#FFDF00;--navy:#25273A;--teal:#008C95;--ink:#15182B;--muted:#5D6677;--line:#DDE1E7;--soft:#F3F4F6;--white:#fff;--green:#297D6B;--blue:#315ba8}*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--ink);background:#fff}button{font-family:inherit}.top{height:126px;background:var(--navy);color:#fff;display:flex;align-items:center;padding:0 28px;border-bottom:6px solid var(--yellow);position:sticky;top:0;z-index:5000}.logos{display:flex;gap:12px;margin-right:26px}.savLogo{width:74px;height:56px;background:var(--yellow);display:flex;align-items:flex-end;justify-content:center;color:#e2382c;font-size:18px;padding-bottom:9px;border-radius:2px}.clientLogo{width:96px;height:56px;background:#fff;color:var(--navy);display:grid;place-items:center;font-weight:900;line-height:.95;border-radius:2px;text-align:center}.topText .advisory{color:var(--yellow);font-weight:900;letter-spacing:.36em;font-size:14px}.topText h1{font-family:Georgia,serif;font-weight:500;font-size:42px;line-height:1;margin:5px 0 7px}.topText p{margin:0;color:#e7e8ef;font-size:15px}.shell{display:grid;grid-template-columns:318px 1fr;min-height:calc(100vh - 126px)}.side{border-right:1px solid var(--line);background:#fff;position:sticky;top:126px;height:calc(100vh - 126px);overflow:auto;padding:18px 14px}.navBtn{width:100%;border:1px solid var(--line);background:#fff;border-radius:999px;padding:10px 12px;margin-bottom:8px;font-size:13px;font-weight:800;text-align:left;cursor:pointer;color:var(--navy)}.navBtn.active{background:var(--navy);color:#fff;border-color:var(--navy)}.side .label{font-size:11px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:18px 8px 8px}.mapCard{display:flex;gap:9px;width:100%;border:1px solid var(--line);background:#fff;border-radius:14px;padding:10px;margin-bottom:8px;text-align:left;cursor:pointer}.mapCard:hover,.mapCard.active{border-color:var(--teal);box-shadow:0 6px 18px rgba(0,0,0,.08)}.mapCard b{display:block;font-size:12px;line-height:1.2}.mapCard span{display:block;color:var(--muted);font-size:11px;margin-top:3px;line-height:1.25}.pin{min-width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font-weight:900;font-size:11px}.pin.comp{background:var(--teal)}.main{padding:24px 30px 50px;background:#fafafa}.section{display:none}.section.active{display:block}.hero{background:#fff;border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:0 10px 24px rgba(0,0,0,.05)}.heroHead{background:var(--navy);color:#fff;padding:22px 26px;border-bottom:5px solid var(--yellow)}.eyebrow{font-size:12px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:var(--yellow)}h2{font-family:Georgia,serif;font-size:36px;line-height:1.05;margin:6px 0 0;font-weight:500}h3{font-size:18px;margin:0 0 10px;color:var(--navy)}p{line-height:1.45}.content{padding:22px 26px}.grid{display:grid;gap:16px}.two{grid-template-columns:1.1fr .9fr}.three{grid-template-columns:repeat(3,1fr)}.four{grid-template-columns:repeat(4,1fr)}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 8px 18px rgba(0,0,0,.04)}.metric{border-left:7px solid var(--yellow)}.metric .num{font-size:30px;font-weight:900;color:var(--navy);line-height:1}.metric .lbl{font-size:12px;text-transform:uppercase;font-weight:900;letter-spacing:.08em;color:var(--muted);margin-top:6px}.imgHero{width:100%;height:320px;object-fit:cover;border-radius:18px;border:1px solid var(--line)}.mapImg{width:100%;height:420px;object-fit:cover;border-radius:18px;border:1px solid var(--line)}.callout{background:#FFF9D8;border:1px solid #efdc68;border-radius:16px;padding:16px}.callout b{color:var(--navy)}.bullets{margin:0;padding-left:18px}.bullets li{margin:8px 0;line-height:1.4}.pill{display:inline-block;border:1px solid var(--line);background:var(--soft);border-radius:999px;padding:6px 10px;margin:3px;font-size:12px;font-weight:800;color:var(--muted)}table{width:100%;border-collapse:collapse;font-size:12px}th{background:var(--yellow);color:#111;text-align:left;padding:9px;font-weight:900}td{border-bottom:1px solid var(--line);padding:9px;vertical-align:top}.barrow{display:grid;grid-template-columns:160px 1fr 50px;gap:10px;align-items:center;margin:10px 0;font-size:13px}.bar{height:16px;background:#e4e7eb;border-radius:999px;overflow:hidden}.fill{height:100%;background:var(--teal)}.fill.yellow{background:var(--yellow)}.mapLayout{display:grid;grid-template-columns:360px 1fr 360px;gap:14px;height:640px}.mapList{overflow:auto}#optionsMap,#compsMap{height:640px;border-radius:18px;border:1px solid var(--line);z-index:1}.detail{overflow:auto}.detail img{width:100%;height:190px;object-fit:cover;border-radius:14px;margin-bottom:12px;border:1px solid var(--line)}.kv{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.kv div{background:var(--soft);border-radius:12px;padding:10px}.kv span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:900}.kv b{font-size:13px}.sectionTitle{display:flex;justify-content:space-between;align-items:end;margin-bottom:14px}.sectionTitle p{margin:0;color:var(--muted);max-width:850px}.footerNote{font-size:11px;color:var(--muted);margin-top:18px}@media(max-width:1100px){.shell{grid-template-columns:1fr}.side{position:static;height:auto}.mapLayout,.two,.three,.four{grid-template-columns:1fr;height:auto}#optionsMap,#compsMap{height:420px}.top{position:static;height:auto;padding:18px}}
+.mapLegend{background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:12px;padding:10px 12px;box-shadow:0 10px 24px rgba(0,0,0,.12);font-size:12px;line-height:1.35;color:#1f2937}.mapLegend .lgTitle{font-weight:800;margin-bottom:6px;color:#111827}.mapLegend .lgRow{display:flex;align-items:center;gap:8px;margin:4px 0}.mapLegend .lgSwatch{width:12px;height:12px;border-radius:50%;border:2px solid #111;flex:0 0 12px}.mapLegend .lgLine{width:16px;height:0;border-top:2px dashed #008C95;display:inline-block}.leaflet-popup-content{font:12px/1.4 Arial,sans-serif}.leaflet-popup-content b{font-size:13px}.mapBadge{transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease}.mapBadge.active{transform:scale(1.14);box-shadow:0 6px 14px rgba(0,0,0,.45)!important;border-color:#FFDF00!important}
+.summarySub{font-size:16px;color:#172033;margin:0 0 18px}
+.summaryTopMetrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:22px 0 22px 0}
+.summaryMetricCard{border:1px solid var(--line);border-left:5px solid var(--yellow);border-radius:12px;background:#fff;padding:15px}
+.summaryMetricCard b{display:block;font-size:24px;line-height:1.1;color:#081a3a}
+.summaryMetricCard span{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.12em;font-weight:900;margin-bottom:6px;color:#081a3a}
+.summaryMetricCard small{color:var(--muted);font-size:12px;line-height:1.35;display:block;margin-top:4px}
+.summaryIntro{font-size:18px;line-height:1.25;font-weight:900;max-width:1120px;margin:34px 0 28px;color:#081a3a}
+.summaryGeoWrap{margin:22px 0 24px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff;display:grid;grid-template-columns:1.35fr .65fr;min-height:340px;box-shadow:0 8px 24px rgba(15,23,42,.05)}
+.summaryGeoMap{height:340px;width:100%;background:#eef2f5}
+.summaryGeoMap img{width:100%;height:100%;object-fit:cover;display:block}
+.summaryGeoPanel{padding:18px 20px;border-left:1px solid var(--line);display:flex;flex-direction:column;gap:12px;justify-content:center}
+.summaryGeoPanel h3{margin:0;color:var(--ink);font-size:22px;line-height:1.1}
+.summaryGeoPanel p{margin:0;color:#4B5563;font-size:14px;line-height:1.45}
+.summaryGeoLegend{display:flex;flex-direction:column;gap:9px;margin-top:4px}
+.summaryGeoLegend div{display:flex;align-items:center;gap:9px;font-size:13px;color:#111827}
+.summaryLegendLine{width:28px;height:0;border-top:4px solid #008C95;border-radius:99px}
+.summaryLegendDot{width:14px;height:14px;border-radius:50%;background:#25273A;border:2px solid #FFDF00;display:inline-block}
+.summaryTwoCol{display:grid;grid-template-columns:1.1fr 1fr;gap:24px}
+.summaryTwoCol p{font-size:15px;line-height:1.45;color:#384152;margin:12px 0 0}
+.summaryYellowHead{background:var(--yellow);font-weight:900;padding:9px 12px;font-size:16px;color:#081a3a}
+.summaryGrayBox{background:#eee;padding:22px 26px;margin-top:34px;border-radius:4px}
+.summaryGrayBox h3{margin:0 0 10px;font-size:24px;color:#081a3a}
+.summaryGrayBox p{margin:0;color:#384152;line-height:1.45}
+@media(max-width:1050px){.summaryTopMetrics{grid-template-columns:1fr 1fr}.summaryGeoWrap,.summaryTwoCol{grid-template-columns:1fr}.summaryGeoPanel{border-left:0;border-top:1px solid var(--line)}}
+@media(max-width:700px){.summaryTopMetrics{grid-template-columns:1fr}.summaryMetricCard b{font-size:22px}.summaryIntro{font-size:16px}}
+
+
+.currentTopMetrics{margin-top:10px}
+.currentTopMetrics .metric .num{font-size:26px}
+.currentSubSectionTitle{font-size:13px;text-transform:uppercase;letter-spacing:.08em;font-weight:900;color:var(--muted);margin:14px 0 10px}
+.currentBuildingMetrics{margin-top:14px}
+.currentBuildingMetrics .metric{padding:14px}
+.currentBuildingMetrics .metric .num{font-size:24px}
+.currentLeaseMeta{margin-top:14px}
+.currentLeaseMeta div{background:var(--soft);border-radius:12px;padding:12px 14px;border:1px solid var(--line)}
+.currentLeaseMeta span{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:900;color:var(--muted);margin-bottom:5px}
+.currentLeaseMeta b{display:block;font-size:22px;color:var(--navy);line-height:1.1}
+@media(max-width:900px){.currentTopMetrics{grid-template-columns:1fr 1fr}.currentBuildingMetrics{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){.currentTopMetrics,.currentBuildingMetrics,.currentLeaseMeta{grid-template-columns:1fr}}
+
+.summaryGeoMapTagged{position:relative;overflow:hidden}
+.summaryMapTag{position:absolute;left:56%;top:53%;transform:translate(0,-50%);background:rgba(37,39,58,.96);color:#fff;border:1px solid #FFDF00;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:800;line-height:1;box-shadow:0 6px 16px rgba(0,0,0,.18);white-space:nowrap}
+.summaryMapTag:before{content:"";position:absolute;left:-8px;top:50%;transform:translateY(-50%);border-width:7px 8px 7px 0;border-style:solid;border-color:transparent rgba(37,39,58,.96) transparent transparent}
+
+.sideGroup{display:none}.sideGroup.visible{display:block}
+
+#comps .mapList,#options .mapList{display:none}#comps .mapLayout,#options .mapLayout{grid-template-columns:minmax(420px,1.05fr) minmax(360px,.95fr)}@media(max-width:1200px){#comps .mapLayout,#options .mapLayout{grid-template-columns:1fr}}
+
+.tableWrap{overflow:auto}
+.pipelineMiniGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}
+.pipelineMiniCard{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:#fff}
+.pipelineMiniCard b{display:block;color:var(--navy);font-size:14px;line-height:1.25;margin:6px 0}
+.pipelineMiniCard span{display:block;color:var(--muted);font-size:12px;line-height:1.35}
+.pipelineMiniTop{display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--muted);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+.pipelinePri{display:inline-block;border-radius:999px;padding:3px 8px;font-size:10px;letter-spacing:.08em;color:#fff}
+.pipelinePri.high{background:#315ba8}.pipelinePri.medium{background:#4b5563}.pipelinePri.watch{background:#008C95}
+.pipelineNoteList{margin:0;padding-left:18px;color:#384152}.pipelineNoteList li{margin:0 0 10px 0;line-height:1.45}
+.pipelineSubtle{color:var(--muted);font-size:13px;margin-top:8px}
+@media(max-width:1100px){.pipelineMiniGrid{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.pipelineMiniGrid{grid-template-columns:1fr}}
+
+#prologisMap{height:640px;border-radius:18px;border:1px solid var(--line);z-index:1}
+.pipelineLayout{grid-template-columns:340px 1fr 390px}
+.pin.pipe{background:#315ba8}.pin.pipe.medium{background:#6b7280}.pin.pipe.watch{background:#008C95}.pin.pipe.high{background:#315ba8}
+.pipelineBadge{transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease}.pipelineBadge.active{transform:scale(1.16);box-shadow:0 6px 14px rgba(0,0,0,.45)!important;border-color:#FFDF00!important}
+.pipelineDetailTitle{display:flex;align-items:center;gap:8px;margin-bottom:6px}.pipelineDetailTitle .pill{margin:0}
+.pipelineSummaryStrip{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 6px 0}
+.pipelineSubtle{color:var(--muted);font-size:13px;margin-top:8px}
+.tableWrap{overflow:auto}
+@media(max-width:1200px){.pipelineLayout{grid-template-columns:1fr; height:auto}#prologisMap{height:420px}}
+
+/* Prologis pipeline refresh */
+#prologis .card{box-shadow:0 10px 24px rgba(15,23,42,.05)}
+.proHero{display:grid;grid-template-columns:1.35fr .65fr;gap:18px;padding:22px 24px;background:linear-gradient(180deg,#ffffff 0%,#f6f8fb 100%);border-radius:22px;margin-bottom:16px}
+.proHero h2{margin:6px 0 8px 0;font-size:42px;line-height:1.05;color:var(--navy)}
+.proHero p{margin:0;color:#4b5563;max-width:900px;font-size:15px;line-height:1.5}
+.proHeroChips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.proHeroChips .pill{background:#fff;border-color:#d7dde8}
+.proHeroAside{display:grid;gap:12px;align-content:center}
+.proMiniStat{background:var(--navy);color:#fff;border-radius:18px;padding:16px 18px;border:1px solid rgba(255,255,255,.08)}
+.proMiniStat strong{display:block;font-size:28px;line-height:1;margin-bottom:6px;color:#fff}
+.proMiniStat span{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#d8deed;font-weight:800}
+.proMetricRow{margin-top:0!important;margin-bottom:16px}.proMetric{border-radius:16px}.proMetric .num{font-size:34px}
+.proInsightGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px}.proInsightCard{padding:18px 20px}.proInsightCard.accent{background:#fffdf1}
+.proInsightHead{font-size:12px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#667085;margin-bottom:10px}.proInsightKicker{font-size:20px;line-height:1.25;color:var(--navy);margin-bottom:8px}.proInsightCopy{margin:0 0 12px 0;color:#4b5563;line-height:1.5}
+.proLayout{display:grid;grid-template-columns:360px minmax(420px,1fr) 390px;gap:16px;align-items:start}.proPanel{padding:0;overflow:hidden;border-radius:20px}.proPanelHead{padding:16px 18px 14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:14px;align-items:flex-start;background:#fff}.proPanelHead h3{margin:4px 0 0 0;font-size:22px;line-height:1.1;color:var(--navy)}.proPanelHead .eyebrow.small{font-size:11px;letter-spacing:.12em;color:#8992a3}.proLegendInline{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding-top:6px}.proLegendInline span{font-size:12px;color:#667085;font-weight:700;display:flex;align-items:center;gap:6px}.proLegendInline .dot{width:10px;height:10px;border-radius:50%;display:inline-block}.proLegendInline .dot.high{background:#315ba8}.proLegendInline .dot.medium{background:#6b7280}.proLegendInline .dot.watch{background:#008C95}.proMapNote{margin:2px 0 0 0;color:#667085;font-size:12px;max-width:220px;line-height:1.35}
+.proCardsWrap{padding:12px;height:680px}.proCard{margin-bottom:10px;border-radius:16px;padding:12px 12px 12px 10px;align-items:flex-start}.proCard:hover,.proCard.active{border-color:#315ba8;box-shadow:0 10px 22px rgba(37,39,58,.08);transform:translateY(-1px)}.proCardPin{min-width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:900;color:#fff;margin-top:2px;box-shadow:inset 0 0 0 3px rgba(255,255,255,.2)}.proCardPin.high{background:#315ba8}.proCardPin.medium{background:#6b7280}.proCardPin.watch{background:#008C95}.proCardBody{min-width:0;flex:1}.proCardTop{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.proCardTop b{font-size:13px;line-height:1.25;color:#111827;max-width:190px}.proPriority{display:inline-flex;align-items:center;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}.proPriority.high{background:#eaf0fb;color:#315ba8}.proPriority.medium{background:#eef1f4;color:#5f6877}.proPriority.watch{background:#e8fbfc;color:#008C95}.proAddr{display:block;color:#667085;font-size:12px;line-height:1.35;margin-top:3px}.proMetaRow{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}.proMetaRow span,.proLineTag{display:inline-flex;border-radius:999px;background:#f3f5f8;color:#475467;padding:4px 8px;font-size:11px;font-weight:700;line-height:1}.proLineTag.logistics{background:#eefbf4;color:#0f7b4f}
+.proMapPanel #prologisMap{height:680px;border:0;border-radius:0}.proDetailPanel{min-height:680px;padding:18px}.proDetailPlaceholder{height:100%;display:grid;place-items:center;text-align:center;padding:36px 18px;color:#667085}.proDetailPlaceholderIcon{width:56px;height:56px;border-radius:50%;background:#f4f6f9;display:grid;place-items:center;font-size:28px;color:#315ba8;margin:0 auto 10px auto}.proDetailPanel h3{font-size:32px;line-height:1.05;margin:2px 0 6px 0;color:var(--navy)}.proDetailPanel .pill{border-color:#d7dde8;background:#fff}.proDetailPanel .kv div{padding:12px;border:1px solid #eef2f6;background:#fafbfd}.proDetailPanel .kv b{font-size:13px;line-height:1.3}.proDetailPanel .callout{border-radius:14px}
+.proTableWrap{margin-top:18px;padding:0;overflow:hidden}.proTableWrap summary{list-style:none;cursor:pointer;padding:16px 18px;font-size:15px;font-weight:900;color:var(--navy);background:#fff}.proTableWrap summary::-webkit-details-marker{display:none}.proTableWrap summary:after{content:'+';float:right;color:#315ba8;font-size:20px;line-height:1}.proTableWrap[open] summary:after{content:'−'}.proTableWrap .tableWrap{padding:0 18px 18px}
+@media(max-width:1300px){.proLayout{grid-template-columns:320px minmax(340px,1fr) 360px}.proHero h2{font-size:36px}}
+@media(max-width:1100px){.proHero,.proInsightGrid,.proLayout{grid-template-columns:1fr}.proCardsWrap{height:420px}.proMapPanel #prologisMap,.proDetailPanel{min-height:420px;height:auto}.proHeroAside{grid-template-columns:1fr 1fr 1fr}.proMapNote{max-width:none}}
+@media(max-width:700px){.proHero{padding:18px}.proHero h2{font-size:30px}.proHeroAside{grid-template-columns:1fr}.proCardTop{flex-direction:column}.proMetric .num{font-size:28px}}
+</style></head><body><header class="top"><div class="logos"><div class="savLogo">savills</div><div class="clientLogo">NFI</div></div><div class="topText"><div class="advisory">INDUSTRIAL ADVISORY</div><h1>Market intelligence dashboard</h1><p>4301 West Valley Highway East | Sumner, WA</p></div></header><div class="shell"><aside class="side"><button class="navBtn active" data-target="summary">Executive summary</button><button class="navBtn" data-target="situation">Current situation</button><button class="navBtn" data-target="market">Seattle/Puget Sound market data</button><button class="navBtn" data-target="comps">Market comps</button><button class="navBtn" data-target="landlord">Landlord exposure</button><button class="navBtn" data-target="options">Relocation/leverage options</button><button class="navBtn" data-target="prologis">Prologis expirations</button><button class="navBtn" data-target="approach">Recommended approach</button><div class="sideGroup" id="sidebarOptions"><div class="label">Relocation/leverage options</div><div id="optionCards"><button class="mapCard" onclick="selectOption('O1')"><div class="pin">O1</div><div><b>2511 70th Ave E - Fife Commerce Center</b><span>255,070 SF direct; 125,000-255,000 SF sublet · 30' clear · Direct and sublet</span></div></button>
+<button class="mapCard" onclick="selectOption('O2')"><div class="pin">O2</div><div><b>14021 E Pioneer Way - Pioneer Logistics</b><span>211,153 SF · 36' clear · Direct</span></div></button>
+<button class="mapCard" onclick="selectOption('O3')"><div class="pin">O3</div><div><b>80 5th Ave - Bridge Point i5 - Building 1</b><span>166,724-333,448 SF · Not stated in summary clear · Direct</span></div></button>
+<button class="mapCard" onclick="selectOption('O4')"><div class="pin">O4</div><div><b>80 5th Ave - Bridge Point i5 - Building 2</b><span>239,271-478,542 SF · 40' clear · Direct</span></div></button>
+<button class="mapCard" onclick="selectOption('O5')"><div class="pin">O5</div><div><b>7402-7490 26th St E - 167 Industrial</b><span>100,000-225,972 SF · 32' clear · Direct</span></div></button>
+<button class="mapCard" onclick="selectOption('O6')"><div class="pin">O6</div><div><b>2801 78th Ave E - Fife I-5 Commerce Center</b><span>250,490 SF · 32' clear · Sublet</span></div></button>
+<button class="mapCard" onclick="selectOption('O7')"><div class="pin">O7</div><div><b>2701 142nd Ave E - Sumner Central</b><span>90,000-427,253 SF · 30' clear · Direct</span></div></button></div></div><div class="sideGroup" id="sidebarComps"><div class="label">Market comps</div><div id="compCards"><button class="mapCard" onclick="selectComp('C1')"><div class="pin comp">C1</div><div><b>Yusen Logistics Co</b><span>13501 38th Street East · 114,000 SF · $0.90 PSF/month</span></div></button>
+<button class="mapCard" onclick="selectComp('C2')"><div class="pin comp">C2</div><div><b>Cabela's</b><span>1212 Valley Avenue NW · 104,786 SF · $0.93 PSF/month</span></div></button>
+<button class="mapCard" onclick="selectComp('C4')"><div class="pin comp">C4</div><div><b>Crane Worldwide Logistics</b><span>3101 W Valley Highway E · 264,344 SF · $0.92 PSF/month</span></div></button>
+<button class="mapCard" onclick="selectComp('C5')"><div class="pin comp">C5</div><div><b>Amazon.com</b><span>7449 45th Street Court E · 516,746 SF · $0.78 PSF/month</span></div></button>
+<button class="mapCard" onclick="selectComp('C6')"><div class="pin comp">C6</div><div><b>McLane Company</b><span>4301 W Valley Highway E · 145,812 SF · $0.92 PSF/month</span></div></button></div></div></aside><main class="main">
+<section class="section active" id="summary">
+<div class="eyebrow">Executive summary</div>
+<h2>NFI Sumner lease expiration strategy</h2>
+<p class="summarySub">4301 West Valley Highway East | Sumner, WA</p>
+<div class="summaryTopMetrics">
+<div class="summaryMetricCard">
+<span>Premises</span>
+<b>257,775 SF</b>
+<small>NFI occupied footprint within a 506,925 SF building</small>
+</div>
+<div class="summaryMetricCard">
+<span>Lease expiration</span>
+<b>February 2028</b>
+<small>Current NFI lease is scheduled to expire 2/29/28</small>
+</div>
+<div class="summaryMetricCard">
+<span>Current rent</span>
+<b>$0.92 PSF/month</b>
+<small>NFI's current rent</small>
+</div>
+<div class="summaryMetricCard">
+<span>Submarket vacancy</span>
+<b>16.1%</b>
+<small>Puyallup/Sumner Q1 2026 vacancy rate</small>
+</div>
+</div>
+<p class="summaryIntro">NFI occupies 4301 West Valley Highway East, a 257,775 SF distribution footprint in Sumner. The current lease expires in February 2028 at a reported blended rent of $0.92 PSF/month, while the surrounding market shows softer conditions, elevated vacancy and multiple competitive alternatives that can be used to improve economics at the building NFI ultimately prefers.</p>
+<div class="summaryGeoWrap">
+<div class="summaryGeoMap summaryGeoMapTagged">
+<img alt="NFI Sumner executive summary map" src="assets/image_01_1c70b5a419.png"/>
+<div aria-label="NFI location tag" class="summaryMapTag">NFI location</div>
+</div>
+<div class="summaryGeoPanel">
+<h3>Puyallup/Sumner competitive market area</h3>
+<p>4301 West Valley Highway East sits within the Puyallup/Sumner industrial submarket in the broader Puget Sound market. Current research indicates 16.1% vacancy in the submarket, roughly $0.90 PSF/month asking rent, and a credible set of nearby alternatives within NFI's size band.</p>
+<div class="summaryGeoLegend">
+<div><span class="summaryLegendLine"></span> 5-mile competitive radius</div>
+<div><span class="summaryLegendDot"></span> 4301 West Valley Highway East</div>
+</div>
+</div>
+</div>
+<div class="summaryTwoCol">
+<div>
+<div class="summaryYellowHead">Market evidence</div>
+<p>The 5-mile market set includes direct and sublease options from approximately 211,000 SF to nearly 479,000 SF, including a 250,490 SF sublease that closely matches NFI's current footprint. Recent comp evidence generally clusters around the high-$0.70s to low-$0.90s PSF/month range, with the local vacancy backdrop giving occupiers more leverage than in prior years.</p>
+</div>
+<div>
+<div class="summaryYellowHead">Recommended process</div>
+<p>Confirm lease mechanics, compete the market with credible alternatives, and use that competitive process to drive the lowest cost deal at the building of NFI's choice. The objective should be to preserve operational fit while taking advantage of today's softer market conditions.</p>
+</div>
+</div>
+<div class="summaryGrayBox">
+<h3>Critical context</h3>
+<p>NFI does not need to force a move, but the current market provides a real opportunity to test alternatives early and create negotiating leverage ahead of the 2028 lease expiration.</p>
+</div>
+</section>
+<section class="section" id="situation">
+<div class="sectionTitle">
+<div>
+<div class="eyebrow">Current situation</div>
+<h2>4301 West Valley Highway East | Sumner, WA</h2>
+</div>
+</div>
+<div class="grid four currentTopMetrics">
+<div class="card metric"><div class="num">257,775 SF</div><div class="lbl">NFI premises</div></div>
+<div class="card metric"><div class="num">Feb. 29, 2028</div><div class="lbl">Lease expiration</div></div>
+<div class="card metric"><div class="num">$0.92 PSF/month</div><div class="lbl">Current rent</div></div>
+<div class="card metric"><div class="num">$0.90-$0.95 PSF/month</div><div class="lbl">Market rent guidance</div></div>
+</div>
+<div class="grid two" style="margin-top:16px">
+<div class="card">
+<img class="imgHero" src="assets/image_02_0344124d85.jpg"/>
+<div class="currentSubSectionTitle">Building facts</div>
+<div class="grid four currentBuildingMetrics">
+<div class="card metric"><div class="num">506,925</div><div class="lbl">Building SF</div></div>
+<div class="card metric"><div class="num">30'</div><div class="lbl">Clear height</div></div>
+<div class="card metric"><div class="num">116</div><div class="lbl">Exterior docks</div></div>
+<div class="card metric"><div class="num">CenterPoint</div><div class="lbl">True owner</div></div>
+</div>
+<div class="currentSubSectionTitle">Additional lease details</div>
+<div class="kv currentLeaseMeta">
+<div><span>Transaction type</span><b>New lease</b></div>
+<div><span>Lease start</span><b>Jan. 1, 2023</b></div>
+<div><span>Escalations</span><b>3.50% annually</b></div>
+<div><span>Free rent / TI</span><b>2 months / $1.00/SF</b></div>
+</div>
+</div>
+<div class="card"><h3>What matters for the renewal strategy</h3><ul class="bullets"><li>The building is large, functional and well-located with SR-167 frontage, fenced/secured configuration, 30' clear, 116 docks and 103 trailer stalls.</li><li>CoStar shows a 25,000 SF sublease currently available at the building through November 2030, which indicates some internal vacancy/flexibility even though the property is shown as 100% leased.</li><li>McLane also has a 145,812 SF extension in the same building expiring July 31, 2030. CenterPoint therefore has multiple known occupier timelines to manage in the asset.</li><li>NFI should not jump straight to a rent target. The first step is to confirm renewal rights, notice dates, expansion/contraction rights, yard rights, operating expense treatment and any restrictions tied to the master lease/sublease situation.</li></ul><div class="callout"><b>Advisor view:</b> The market should be competed to drive the lowest cost deal at the building of NFI's choice. That means credible alternatives need to be built before renewal negotiations become purely landlord-driven.</div></div>
+</div>
+</section>
+<section class="section" id="market"><div class="sectionTitle"><div><div class="eyebrow">Market data</div><h2>Puget Sound fundamentals support a disciplined renewal process.</h2></div><p>Q1 2026 data shows elevated vacancy, negative net absorption and recent deliveries outpacing demand. Puyallup/Sumner is one of the highest-vacancy submarkets in the region.</p></div><div class="grid four"><div class="card metric"><div class="num">11.5%</div><div class="lbl">Regional vacancy</div></div><div class="card metric"><div class="num">16.1%</div><div class="lbl">Puyallup/Sumner vacancy</div></div><div class="card metric"><div class="num">-$0.8M</div><div class="lbl">SF net absorption YTD</div></div><div class="card metric"><div class="num">2.5M</div><div class="lbl">SF delivered YTD</div></div></div><div class="grid two" style="margin-top:16px"><div class="card"><h3>Vacancy rate comparison</h3><div class="barrow"><b>Puyallup/Sumner</b><div class="bar"><div class="fill yellow" style="width:89%"></div></div><b>16.1%</b></div><div class="barrow"><b>Federal Way/Auburn</b><div class="bar"><div class="fill" style="width:72%"></div></div><b>12.9%</b></div><div class="barrow"><b>Port of Tacoma/Fife</b><div class="bar"><div class="fill" style="width:63%"></div></div><b>11.4%</b></div><div class="barrow"><b>Seattle/Puget Sound</b><div class="bar"><div class="fill" style="width:64%"></div></div><b>11.5%</b></div><div class="barrow"><b>Tacoma</b><div class="bar"><div class="fill" style="width:14%"></div></div><b>2.5%</b></div></div><div class="card"><h3>Asking rent comparison</h3><div class="barrow"><b>Federal Way/Auburn</b><div class="bar"><div class="fill" style="width:62%"></div></div><b>$1.11</b></div><div class="barrow"><b>Seattle/Puget Sound</b><div class="bar"><div class="fill" style="width:58%"></div></div><b>$1.05</b></div><div class="barrow"><b>Puyallup/Sumner</b><div class="bar"><div class="fill yellow" style="width:50%"></div></div><b>$0.90</b></div><div class="barrow"><b>Port of Tacoma/Fife</b><div class="bar"><div class="fill" style="width:42%"></div></div><b>$0.75</b></div><div class="barrow"><b>Tacoma</b><div class="bar"><div class="fill" style="width:40%"></div></div><b>$0.72</b></div></div></div><div class="grid three" style="margin-top:16px"><div class="card"><h3>Supply pressure</h3><p>Regionwide vacancy reached a new high as 2.5 MSF delivered in Q1 while absorption remained negative. That should keep landlords focused on occupancy and flexibility.</p></div><div class="card"><h3>Submarket pressure</h3><p>Puyallup/Sumner vacancy at 16.1% is above the region and relevant to the incumbent asset. The market backdrop supports a competitive process.</p></div><div class="card"><h3>Pipeline shift</h3><p>Under-construction inventory fell to 3.1 MSF, down 3.0 MSF year over year, suggesting fewer future starts but continued near-term pressure from delivered space.</p></div></div></section>
+<section class="section" id="comps"><div class="sectionTitle"><div><div class="eyebrow">Market comps</div><h2>Recent comps support market rent guidance around $0.90-$0.93 PSF/month for stronger like-for-like evidence.</h2></div></div><div class="mapLayout"><div class="mapList card"><button class="mapCard" onclick="selectComp('C1')"><div class="pin comp">C1</div><div><b>Yusen Logistics Co</b><span>13501 38th Street East · 114,000 SF · $0.90 PSF/month</span></div></button>
+<button class="mapCard" onclick="selectComp('C2')"><div class="pin comp">C2</div><div><b>Cabela's</b><span>1212 Valley Avenue NW · 104,786 SF · $0.93 PSF/month</span></div></button>
+<button class="mapCard" onclick="selectComp('C4')"><div class="pin comp">C4</div><div><b>Crane Worldwide Logistics</b><span>3101 W Valley Highway E · 264,344 SF · $0.92 PSF/month</span></div></button>
+<button class="mapCard" onclick="selectComp('C5')"><div class="pin comp">C5</div><div><b>Amazon.com</b><span>7449 45th Street Court E · 516,746 SF · $0.78 PSF/month</span></div></button>
+<button class="mapCard" onclick="selectComp('C6')"><div class="pin comp">C6</div><div><b>McLane Company</b><span>4301 W Valley Highway E · 145,812 SF · $0.92 PSF/month</span></div></button></div><div id="compsMap"></div><div class="detail card" id="compDetail"></div></div><div class="card" style="margin-top:16px"><h3>Comparable transaction evidence</h3><table><thead><tr><th>ID</th><th>Tenant</th><th>Address</th><th>Quarter</th><th>Size</th><th>Type</th><th>Term</th><th>Start rent</th><th>Free rent</th><th>TI</th></tr></thead><tbody><tr><td>C1</td><td>Yusen Logistics Co</td><td>13501 38th Street East</td><td>2025 Q3</td><td>114,000 SF</td><td>Renewal</td><td>5y 3m</td><td>$0.90</td><td>3 mo</td><td>$2.08</td></tr>
+<tr><td>C2</td><td>Cabela's</td><td>1212 Valley Avenue NW</td><td>2025 Q3</td><td>104,786 SF</td><td>Renewal</td><td>5y</td><td>$0.93</td><td>0 mo</td><td>As-is</td></tr>
+<tr><td>C4</td><td>Crane Worldwide Logistics</td><td>3101 W Valley Highway E</td><td>2024 Q4</td><td>264,344 SF</td><td>New lease</td><td>5y 6m</td><td>$0.92</td><td>6 mo</td><td>$1.75</td></tr>
+<tr><td>C5</td><td>Amazon.com</td><td>7449 45th Street Court E</td><td>2023 Q3</td><td>516,746 SF</td><td>Ground</td><td>15y</td><td>$0.78</td><td>-</td><td>-</td></tr>
+<tr><td>C6</td><td>McLane Company</td><td>4301 W Valley Highway E</td><td>2022 Q4</td><td>145,812 SF</td><td>Extension</td><td>7y 1m</td><td>$0.92</td><td>1 mo</td><td>$1.25</td></tr></tbody></table></div></section>
+<section class="section" id="landlord"><div class="sectionTitle"><div><div class="eyebrow">Landlord exposure</div><h2>CenterPoint has a stabilized asset but known lease events create negotiation context.</h2></div></div><div class="grid two"><div class="card"><h3>4301 W Valley Hwy E - asset facts</h3><ul class="bullets"><li>True owner: CenterPoint Properties.</li><li>Building size: approximately 506,925 SF, with 30' clear, 116 docks, 4 drive-ins and 103 trailer stalls.</li><li>CoStar shows the property as 100% leased, but with a 25,000 SF industrial sublet available on 30 days' occupancy through November 2030.</li><li>Direct frontage and access to SR-167 should remain a meaningful operational advantage for NFI.</li></ul></div><div class="card"><h3>Known occupier timeline</h3><table><thead><tr><th>Occupier</th><th>SF</th><th>Known expiration</th><th>Notes</th></tr></thead><tbody><tr><td>NFI Industries</td><td>257,775 SF</td><td>Feb. 29, 2028</td><td>Current rent $0.92 PSF/month; market rent guidance $0.90-$0.95 PSF/month based on recent comps and Savills Research asking rent.</td></tr><tr><td>McLane Company</td><td>145,812 SF</td><td>July 31, 2030</td><td>Extension signed Q4 2022; current rent $0.99 PSF/month.</td></tr><tr><td>Available sublet</td><td>25,000 SF</td><td>Through Nov. 2030</td><td>Flexible lease terms up to five years per CoStar report.</td></tr></tbody></table><div class="callout" style="margin-top:14px"><b>Negotiation implication:</b> NFI can credibly frame the conversation around certainty, operational continuity and market-clearing economics, but leverage should be supported by real alternatives rather than broad market commentary alone.</div></div></div></section>
+<section class="section" id="options"><div class="sectionTitle"><div><div class="eyebrow">Relocation/leverage options</div><h2>Seven nearby options create enough competitive tension to support an early market test.</h2></div></div><div class="mapLayout"><div class="mapList card"><button class="mapCard" onclick="selectOption('O1')"><div class="pin">O1</div><div><b>2511 70th Ave E - Fife Commerce Center</b><span>255,070 SF direct; 125,000-255,000 SF sublet · 30' clear · Direct and sublet</span></div></button>
+<button class="mapCard" onclick="selectOption('O2')"><div class="pin">O2</div><div><b>14021 E Pioneer Way - Pioneer Logistics</b><span>211,153 SF · 36' clear · Direct</span></div></button>
+<button class="mapCard" onclick="selectOption('O3')"><div class="pin">O3</div><div><b>80 5th Ave - Bridge Point i5 - Building 1</b><span>166,724-333,448 SF · Not stated in summary clear · Direct</span></div></button>
+<button class="mapCard" onclick="selectOption('O4')"><div class="pin">O4</div><div><b>80 5th Ave - Bridge Point i5 - Building 2</b><span>239,271-478,542 SF · 40' clear · Direct</span></div></button>
+<button class="mapCard" onclick="selectOption('O5')"><div class="pin">O5</div><div><b>7402-7490 26th St E - 167 Industrial</b><span>100,000-225,972 SF · 32' clear · Direct</span></div></button>
+<button class="mapCard" onclick="selectOption('O6')"><div class="pin">O6</div><div><b>2801 78th Ave E - Fife I-5 Commerce Center</b><span>250,490 SF · 32' clear · Sublet</span></div></button>
+<button class="mapCard" onclick="selectOption('O7')"><div class="pin">O7</div><div><b>2701 142nd Ave E - Sumner Central</b><span>90,000-427,253 SF · 30' clear · Direct</span></div></button></div><div id="optionsMap"></div><div class="detail card" id="optionDetail"></div></div><div class="card" style="margin-top:16px"><h3>Availability evidence</h3><table><thead><tr><th>ID</th><th>Property</th><th>Available SF</th><th>Clear</th><th>Loading</th><th>Rent</th><th>Term</th></tr></thead><tbody><tr><td>O1</td><td>2511 70th Ave E - Fife Commerce Center</td><td>255,070 SF direct; 125,000-255,000 SF sublet</td><td>30'</td><td>72 docks for available block; 131 building total</td><td>$0.72 PSF/month NNN sublet; direct withheld</td><td>Negotiable / sublet through Aug. 2027</td></tr>
+<tr><td>O2</td><td>14021 E Pioneer Way - Pioneer Logistics</td><td>211,153 SF</td><td>36'</td><td>34 exterior</td><td>Withheld</td><td>Negotiable</td></tr>
+<tr><td>O3</td><td>80 5th Ave - Bridge Point i5 - Building 1</td><td>166,724-333,448 SF</td><td>Not stated in summary</td><td>Not stated</td><td>Withheld</td><td>Negotiable</td></tr>
+<tr><td>O4</td><td>80 5th Ave - Bridge Point i5 - Building 2</td><td>239,271-478,542 SF</td><td>40'</td><td>70 exterior</td><td>Withheld</td><td>Negotiable</td></tr>
+<tr><td>O5</td><td>7402-7490 26th St E - 167 Industrial</td><td>100,000-225,972 SF</td><td>32'</td><td>70 exterior</td><td>Withheld</td><td>Negotiable</td></tr>
+<tr><td>O6</td><td>2801 78th Ave E - Fife I-5 Commerce Center</td><td>250,490 SF</td><td>32'</td><td>63 exterior</td><td>Withheld</td><td>Through Dec. 2029</td></tr>
+<tr><td>O7</td><td>2701 142nd Ave E - Sumner Central</td><td>90,000-427,253 SF</td><td>30'</td><td>111 available; 120 building total</td><td>Withheld</td><td>Negotiable</td></tr></tbody></table></div></section><section class="section" id="prologis">
+<div class="proHero card">
+<div class="proHeroMain">
+<div class="eyebrow">Prologis demand pipeline</div>
+<h2>Upcoming expirations in Prologis Sumner inventory</h2>
+<p>This interactive view turns the pipeline extraction into a cleaner demand map around NFI's Sumner location. It is designed to help NFI think about expansion, customer demand and landlord intelligence in one place.</p>
+<div class="proHeroChips">
+<span class="pill">Starbucks M-to-M excluded</span>
+<span class="pill">Approximate mapped locations</span>
+<span class="pill">Focused on nearby Sumner corridor inventory</span>
+</div>
+</div>
+<div class="proHeroAside">
+<div class="proMiniStat"><strong>22</strong><span>upcoming records</span></div>
+<div class="proMiniStat"><strong>3.97 MSF</strong><span>nearby expiring SF</span></div>
+<div class="proMiniStat"><strong>13</strong><span>records through 2027</span></div>
+</div>
+</div>
+<div class="grid four currentTopMetrics proMetricRow">
+<div class="card metric proMetric"><div class="num">22</div><div class="lbl">Upcoming records</div><p class="pipelineSubtle">3.97 MSF total nearby expirations</p></div>
+<div class="card metric proMetric"><div class="num">14</div><div class="lbl">Within 0-3 mi</div><p class="pipelineSubtle">2.78 MSF closest to NFI</p></div>
+<div class="card metric proMetric"><div class="num">12</div><div class="lbl">High-priority targets</div><p class="pipelineSubtle">2.48 MSF of potential demand</p></div>
+<div class="card metric proMetric"><div class="num">5</div><div class="lbl">3PL / logistics signals</div><p class="pipelineSubtle">1.12 MSF of likely user demand</p></div>
+</div>
+<div class="proInsightGrid">
+<div class="card proInsightCard">
+<div class="proInsightHead">Why this matters</div>
+<ul class="pipelineNoteList">
+<li><b>Expansion and overflow:</b> nearby lease churn helps NFI monitor where users may need space and where overflow demand could emerge.</li>
+<li><b>3PL pipeline:</b> occupiers facing expirations may create opportunities for outsourced logistics solutions or new customer conversations.</li>
+<li><b>Landlord intelligence:</b> NFI leases significant space with Prologis nationally, so understanding the local expiration stack adds credibility and market context.</li>
+</ul>
+</div>
+<div class="card proInsightCard accent">
+<div class="proInsightHead">Key read</div>
+<div class="proInsightKicker">There are <b>13</b> nearby records totaling <b>2.32 MSF</b> through year-end 2027.</div>
+<p class="proInsightCopy">That is enough local churn to matter both as business-development intelligence and as a smarter read on Prologis-controlled demand in the Sumner corridor.</p>
+<div class="callout"><b>Advisor view:</b> This is useful on both fronts - it helps NFI think about future customer demand and expansion, while also showing sophisticated landlord education around Prologis in a market where NFI already has a large portfolio relationship.</div>
+</div>
+</div>
+<div class="proLayout">
+<div class="card proPanel proListPanel">
+<div class="proPanelHead">
+<div>
+<div class="eyebrow small">Nearby expirations</div>
+<h3>Click a record to explore</h3>
+</div>
+<div class="proLegendInline">
+<span><i class="dot high"></i>High</span>
+<span><i class="dot medium"></i>Medium</span>
+<span><i class="dot watch"></i>Watch</span>
+</div>
+</div>
+<div class="mapList proCardsWrap" id="pipelineCards">
+<button class="mapCard proCard" data-pid="P01" onclick="selectPipeline('P01')">
+<div class="proCardPin high">01</div>
+<div class="proCardBody">
+<div class="proCardTop">
+<b>Young's Market Company, LLC</b>
+<span class="proPriority high">High</span>
+</div>
+<span class="proAddr">6408 South 287th Street, Auburn, WA - 98001</span>
+<div class="proMetaRow">
+<span>287,832 SF</span>
+<span>Jun. 2026</span>
+<span>6-10 mi</span>
+</div>
+</div>
+</button>
+<button class="mapCard proCard" data-pid="P02" onclick="selectPipeline('P02')">
+<div class="proCardPin high">02</div>
+<div class="proCardBody">
+<div class="proCardTop">
+<b>Cooper Tire &amp; Rubber Company Inc</b>
+<span class="proPriority high">High</span>
+</div>
+<span class="proAddr">3012 142nd Avenue East, Sumner, WA - 98390</span>
+<div class="proMetaRow">
+<span>131,483 SF</span>
+<span>Jun. 2026</span>
+<span>0-3 mi</span>
+</div>
+</div>
+</button>
+<button class="mapCard proCard" data-pid="P03" onclick="selectPipeline('P03')">
+<div class="proCardPin high">03</div>
+<div class="proCardBody">
+<div class="proCardTop">
+<b>Miwd Holding Company LLC</b>
+<span class="proPriority high">High</span>
+</div>
+<span class="proAddr">3602 Freeman Rd East (Fife DC South), Fife, WA - 98424</span>
+<div class="proMetaRow">
+<span>239,805 SF</span>
+<span>Sep. 2026</span>
+<span>8-11 mi</span>
+</div>
+</div>
+</button>
+<button class="mapCard proCard" data-pid="P04" onclick="selectPipeline('P04')">
+<div class="proCardPin watch">04</div>
+<div class="proCardBody">
+<div class="proCardTop">
+<b>Savers Recycling, Inc.</b>
+<span class="proPriority watch">Watch</span>
+</div>
+<span class="proAddr">4101 Industry Drive E., Fife, WA - 98424</span>
+<div class="proMetaRow">
+<span>93,146 SF</span>
+<span>Feb. 2027</span>
+<span>8-11 mi</span>
+</div>
+</div>
+</button>
+<button class="mapCard proCard" data-pid="P05" onclick="selectPipeline('P05')">
+<div class="proCardPin high">05</div>
+<div class="proCardBody">
+<div class="proCardTop">
+<b>Amazon.com, Inc.</b>
+<span class="proPriority high">High</span>
+</div>
+<span class="proAddr">3711 142nd Avenue East, Sumner, WA - 98390</span>
+<div class="proMetaRow">
+<span>370,087 SF</span>
+<span>Jun. 2027</span>
+<span>0-3 mi</span>
+<span class="proLineTag logistics">3PL signal</span>
+</div>
+</div>
+</button>
+<button class="mapCard proCard" data-pid="P06" onclick="selectPipeline('P06')">
+<div class="proCardPin high">06</div>
+<div class="proCardBody">
+<div class="proCardTop">
+<b>Amazon.com, Inc.</b>
+<span class="proPriority high">High</span>
+</div>
+<span class="proAddr">3603 142nd Ave East, Sumner, WA - 98390</span>
+<div class="proMetaRow">
+<span>220,433 SF</span>
+<span>Jun. 2027</span>
+<span>0-3 mi</span>
+<span class="proLineTag logistics">3PL signal</span>
+</div>
+</div>
+</button>
+<button class="mapCard proCard" data-pid="P07" onclick="selectPipeline('P07')">
+<div class="proCardPin high">07</div>
+<div class="proCardBody">
+<div class="proCardTop">
+<b>Keurig Green Mountain, Inc.</b>
+<span class="proPriority high">High</span>
+</div>
+<span class="proAddr">3324 142nd Ave East, Sumner, WA - 98390</span>
+<div class="proMetaRow">
+<span>263,800 SF</span>
+<span>Aug. 2027</span>
+<span>0-3 mi</span>
+</div>
+</div>
+</button>
+<button class="mapCard proCard" data-pid="P08" onclick="selectPipeline('P08')">
+<div class="proCardPin high">08</div>
+<div class="proCardBody">
+<div class="proCardTop">
+<b>Keurig Green Mountain, Inc.</b>
+<span class="proPriority high">High</span>
+</div>
+<span class="proAddr">3418 142nd Ave East, Sumner, WA - 98390</span>
+<div class="proMetaRow">
+<span>127,500 SF</span>
+<span>Aug. 2027</span>
+<span>0-3 mi</span>
+</div>
+</div>
+</button>
+<button class="mapCard proCard" data-pid="P09" onclick="selectPipeline('P09')">
+<div class="proCardPin watch">09</div>
+<div class="proCardBody">
+<div class="proCardTop">
+<b>Keurig Green Mountain, Inc.</b>
+<span class="proPriority watch">Watch</span>
+</div>
+<span class="proAddr">3418 142nd Ave East, Sumner, WA - 98390</span>
+<div class="proMetaRow">
+<span>96,500 SF</span>
+<span>Aug. 2027</span>
+<span>0-3 mi</span>
+</div>
+</div>
+</button>
+<button class="mapCard proCard" data-pid="P10" onclick="selectPipeline('P10')">
+<div class="proCardPin high">10</div>
+<div class="proCardBody">
+<div class="proCardTop">
+<b>Mattress Firm Holding Corp</b>
+<span class="proPriority high">High</span>
+</div>
+<span class="proAddr">4095 142nd Avenue East (White River North), Sumner, WA - 98390</span>
+<div class="proMetaRow">
+<span>132,525 SF</span>
+<span>Sep. 2027</span>
+<span>0-3 mi</span>
+</div>
+</div>
+</button>
+<button class="mapCard proCard" data-pid="P11" onclick="selectPipeline('P11')">
+<div class="proCardPin watch">11</div>
+<div class="proCardBody">
+<div class="proCardTop">
+<b>Diono, L.L.C.</b>
+<span class="proPriority watch">Watch</span>
+</div>
+<span class="proAddr">14810 Puyallup Street, Sumner, WA - 98390</span>
+<div class="proMetaRow">
+<span>99,140 SF</span>
+<span>Sep. 2027</span>
+<span>0-3 mi</span>
+</div>
+</div>
+</button>
+<button class="mapCard proCard" data-pid="P12" onclick="selectPipeline('P12')">
+<div class="proCardPin high">12</div>
+<div class="proCardBody">
+<div class="proCardTop">
+<b>Alliance Door Products, L.L.C.</b>
+<span class="proPriority high">High</span>
+</div>
+<span class="proAddr">4095 142nd Avenue East (White River North), Sumner, WA - 98390</span>
+<div class="proMetaRow">
+<span>118,912 SF</span>
+<span>Oct. 2027</span>
+<span>0-3 mi</span>
+</div>
+</div>
+</button>
+<button class="mapCard proCard" data-pid="P13" onclick="selectPipeline('P13')">
+<div class="proCardPin high">13</div>
+<div class="proCardBody">
+<div class="proCardTop">
+<b>SHELTERLOGIC LLC</b>
+<span class="proPriority high">High</span>
+</div>
+<span class="proAddr">1601 Industrial Park Way, Puyallup, WA - 98371</span>
+<div class="proMetaRow">
+<span>141,500 SF</span>
+<span>Nov. 2027</span>
+<span>3-6 mi</span>
+</div>
+</div>
+</button>
+<button class="mapCard proCard" data-pid="P14" onclick="selectPipeline('P14')">
+<div class="proCardPin medium">14</div>
+<div class="proCardBody">
+<div class="proCardTop">
+<b>Behr Process Corporation</b>
+<span class="proPriority medium">Medium</span>
+</div>
+<span class="proAddr">840 Industry Drive North, Algona, WA - 98001</span>
+<div class="proMetaRow">
+<span>109,736 SF</span>
+<span>Jan. 2028</span>
+<span>5-7 mi</span>
+</div>
+</div>
+</button>
+<button class="mapCard proCard" data-pid="P15" onclick="selectPipeline('P15')">
+<div class="proCardPin watch">15</div>
+<div class="proCardBody">
+<div class="proCardTop">
+<b>Acme Delivery Service, Inc.</b>
+<span class="proPriority watch">Watch</span>
+</div>
+<span class="proAddr">4512 70th Street E, Fife, WA - 98424-3710</span>
+<div class="proMetaRow">
+<span>85,784 SF</span>
+<span>Jan. 2028</span>
+<span>8-11 mi</span>
+<span class="proLineTag logistics">3PL signal</span>
+</div>
+</div>
+</button>
+<button class="mapCard proCard" data-pid="P16" onclick="selectPipeline('P16')">
+<div class="proCardPin high">16</div>
+<div class="proCardBody">
+<div class="proCardTop">
+<b>Expeditors International of Washington, Inc.</b>
+<span class="proPriority high">High</span>
+</div>
+<span class="proAddr">14301 24th Street, Sumner, WA - 98390</span>
+<div class="proMetaRow">
+<span>292,848 SF</span>
+<span>Mar. 2028</span>
+<span>0-3 mi</span>
+<span class="proLineTag logistics">3PL signal</span>
+</div>
+</div>
+</button>
+<button class="mapCard proCard" data-pid="P17" onclick="selectPipeline('P17')">
+<div class="proCardPin medium">17</div>
+<div class="proCardBody">
+<div class="proCardTop">
+<b>Keystone Automotive Industries, Inc.</b>
+<span class="proPriority medium">Medium</span>
+</div>
+<span class="proAddr">4123 142nd Avenue East, Sumner, WA - 98390</span>
+<div class="proMetaRow">
+<span>290,368 SF</span>
+<span>Jun. 2028</span>
+<span>0-3 mi</span>
+</div>
+</div>
+</button>
+<button class="mapCard proCard" data-pid="P18" onclick="selectPipeline('P18')">
+<div class="proCardPin medium">18</div>
+<div class="proCardBody">
+<div class="proCardTop">
+<b>Dsj Acquisition, Inc.</b>
+<span class="proPriority medium">Medium</span>
+</div>
+<span class="proAddr">3401 West Valley Hwy, Sumner, WA - 98390</span>
+<div class="proMetaRow">
+<span>263,168 SF</span>
+<span>Jul. 2028</span>
+<span>0-3 mi</span>
+</div>
+</div>
+</button>
+<button class="mapCard proCard" data-pid="P19" onclick="selectPipeline('P19')">
+<div class="proCardPin high">19</div>
+<div class="proCardBody">
+<div class="proCardTop">
+<b>UPS Supply Chain Solutions, Inc</b>
+<span class="proPriority high">High</span>
+</div>
+<span class="proAddr">3424 Freeman Rd East, Fife, WA - 98424</span>
+<div class="proMetaRow">
+<span>152,325 SF</span>
+<span>May 2029</span>
+<span>8-11 mi</span>
+<span class="proLineTag logistics">3PL signal</span>
+</div>
+</div>
+</button>
+<button class="mapCard proCard" data-pid="P20" onclick="selectPipeline('P20')">
+<div class="proCardPin medium">20</div>
+<div class="proCardBody">
+<div class="proCardTop">
+<b>Rexel USA, Inc.</b>
+<span class="proPriority medium">Medium</span>
+</div>
+<span class="proAddr">1510 Puyallup Street, Sumner, WA - 98390</span>
+<div class="proMetaRow">
+<span>190,042 SF</span>
+<span>Jul. 2029</span>
+<span>0-3 mi</span>
+</div>
+</div>
+</button>
+<button class="mapCard proCard" data-pid="P21" onclick="selectPipeline('P21')">
+<div class="proCardPin watch">21</div>
+<div class="proCardBody">
+<div class="proCardTop">
+<b>Leonard's Metal, Inc.</b>
+<span class="proPriority watch">Watch</span>
+</div>
+<span class="proAddr">101 Western Street, Auburn, WA - 98001</span>
+<div class="proMetaRow">
+<span>80,000 SF</span>
+<span>Jun. 2030</span>
+<span>6-10 mi</span>
+</div>
+</div>
+</button>
+<button class="mapCard proCard" data-pid="P22" onclick="selectPipeline('P22')">
+<div class="proCardPin medium">22</div>
+<div class="proCardBody">
+<div class="proCardTop">
+<b>Pacific Crest Industries, Inc</b>
+<span class="proPriority medium">Medium</span>
+</div>
+<span class="proAddr">13610 152nd St E, Sumner, WA - 98390</span>
+<div class="proMetaRow">
+<span>185,015 SF</span>
+<span>Mar. 2031</span>
+<span>0-3 mi</span>
+</div>
+</div>
+</button>
+</div>
+</div>
+<div class="card proPanel proMapPanel">
+<div class="proPanelHead maphead">
+<div>
+<div class="eyebrow small">Interactive map</div>
+<h3>Approximate demand map</h3>
+</div>
+<p class="proMapNote">NFI current location shown with a dedicated marker and 5-mile context radius.</p>
+</div>
+<div id="prologisMap"></div>
+</div>
+<div class="card proPanel detail proDetailPanel" id="pipelineDetail">
+<div class="proDetailPlaceholder">
+<div class="proDetailPlaceholderIcon">↗</div>
+<h3>Select an expiration</h3>
+<p>Choose a record from the left or click a marker on the map to see lease timing, building information and why the expiration may matter for NFI.</p>
+</div>
+</div>
+</div>
+<details class="card proTableWrap">
+<summary>Supporting expiration table</summary>
+<div class="tableWrap"><table><thead><tr><th>Priority</th><th>Building</th><th>Tenant</th><th>SF</th><th>Lease end</th><th>Approx. distance</th><th>3PL signal</th></tr></thead><tbody><tr><td>High</td><td>Auburn 5</td><td>Young's Market Company, LLC</td><td>287,832 SF</td><td>Jun. 2026</td><td>6-10 mi</td><td>No</td></tr><tr><td>High</td><td>Sumner 1</td><td>Cooper Tire &amp; Rubber Company Inc</td><td>131,483 SF</td><td>Jun. 2026</td><td>0-3 mi</td><td>No</td></tr><tr><td>High</td><td>Fife 16</td><td>Miwd Holding Company LLC</td><td>239,805 SF</td><td>Sep. 2026</td><td>8-11 mi</td><td>No</td></tr><tr><td>Watch</td><td>Trans-Pacific 6</td><td>Savers Recycling, Inc.</td><td>93,146 SF</td><td>Feb. 2027</td><td>8-11 mi</td><td>No</td></tr><tr><td>High</td><td>Sumner 2</td><td>Amazon.com, Inc.</td><td>370,087 SF</td><td>Jun. 2027</td><td>0-3 mi</td><td>Yes</td></tr><tr><td>High</td><td>Sumner 5</td><td>Amazon.com, Inc.</td><td>220,433 SF</td><td>Jun. 2027</td><td>0-3 mi</td><td>Yes</td></tr><tr><td>High</td><td>Sumner 9</td><td>Keurig Green Mountain, Inc.</td><td>263,800 SF</td><td>Aug. 2027</td><td>0-3 mi</td><td>No</td></tr><tr><td>High</td><td>Sumner 10</td><td>Keurig Green Mountain, Inc.</td><td>127,500 SF</td><td>Aug. 2027</td><td>0-3 mi</td><td>No</td></tr><tr><td>Watch</td><td>Sumner 10</td><td>Keurig Green Mountain, Inc.</td><td>96,500 SF</td><td>Aug. 2027</td><td>0-3 mi</td><td>No</td></tr><tr><td>High</td><td>Sumner 19</td><td>Mattress Firm Holding Corp</td><td>132,525 SF</td><td>Sep. 2027</td><td>0-3 mi</td><td>No</td></tr><tr><td>Watch</td><td>Sumner 17</td><td>Diono, L.L.C.</td><td>99,140 SF</td><td>Sep. 2027</td><td>0-3 mi</td><td>No</td></tr><tr><td>High</td><td>Sumner 19</td><td>Alliance Door Products, L.L.C.</td><td>118,912 SF</td><td>Oct. 2027</td><td>0-3 mi</td><td>No</td></tr><tr><td>High</td><td>Puyallup</td><td>SHELTERLOGIC LLC</td><td>141,500 SF</td><td>Nov. 2027</td><td>3-6 mi</td><td>No</td></tr><tr><td>Medium</td><td>Algona 3</td><td>Behr Process Corporation</td><td>109,736 SF</td><td>Jan. 2028</td><td>5-7 mi</td><td>No</td></tr><tr><td>Watch</td><td>Fife DC 1</td><td>Acme Delivery Service, Inc.</td><td>85,784 SF</td><td>Jan. 2028</td><td>8-11 mi</td><td>Yes</td></tr><tr><td>High</td><td>Sumner</td><td>Expeditors International of Washington, Inc.</td><td>292,848 SF</td><td>Mar. 2028</td><td>0-3 mi</td><td>Yes</td></tr><tr><td>Medium</td><td>Sumner 18</td><td>Keystone Automotive Industries, Inc.</td><td>290,368 SF</td><td>Jun. 2028</td><td>0-3 mi</td><td>No</td></tr><tr><td>Medium</td><td>Sumner 22</td><td>Dsj Acquisition, Inc.</td><td>263,168 SF</td><td>Jul. 2028</td><td>0-3 mi</td><td>No</td></tr><tr><td>High</td><td>Fife 17</td><td>UPS Supply Chain Solutions, Inc</td><td>152,325 SF</td><td>May 2029</td><td>8-11 mi</td><td>Yes</td></tr><tr><td>Medium</td><td>Sumner 27</td><td>Rexel USA, Inc.</td><td>190,042 SF</td><td>Jul. 2029</td><td>0-3 mi</td><td>No</td></tr><tr><td>Watch</td><td>Auburn 6</td><td>Leonard's Metal, Inc.</td><td>80,000 SF</td><td>Jun. 2030</td><td>6-10 mi</td><td>No</td></tr><tr><td>Medium</td><td>Sumner 20</td><td>Pacific Crest Industries, Inc</td><td>185,015 SF</td><td>Mar. 2031</td><td>0-3 mi</td><td>No</td></tr></tbody></table></div>
+</details>
+</section>
+<section class="section" id="approach"><div class="hero"><div class="heroHead"><div class="eyebrow">Recommended approach</div><h2>Confirm the lease mechanics, test credible alternatives, then negotiate from choice.</h2></div><div class="content"><div class="grid three"><div class="card"><h3>1. Confirm control points</h3><p>Abstract renewal options, notice dates, expansion/contraction rights, yard rights, restoration obligations, operating expense treatment and any interaction with the master lease/sublease timeline.</p></div><div class="card"><h3>2. Build competitive tension</h3><p>Engage the most credible 5-mile alternatives, prioritize the 250,490 SF sublease and the Sumner/Fife direct options, and validate economics, timing and operating fit.</p></div><div class="card"><h3>3. Negotiate with optionality</h3><p>Use the market process to drive the lowest cost deal at the building NFI chooses, including rent, concessions, flexibility and operational protections.</p></div></div><div class="card" style="margin-top:16px"><h3>Near-term action plan</h3><table><thead><tr><th>Workstream</th><th>Purpose</th><th>Output</th></tr></thead><tbody><tr><td>Lease review</td><td>Identify rights, constraints and negotiation dates.</td><td>Lease control-point memo.</td></tr><tr><td>Market validation</td><td>Confirm active availability, asking economics and timing.</td><td>Updated options matrix and tour shortlist.</td></tr><tr><td>Financial model</td><td>Compare renew-in-place, relocation, sublease and blend-and-extend outcomes.</td><td>10-year occupancy cost comparison.</td></tr><tr><td>Landlord strategy</td><td>Shape a credible ask before renewal dialogue becomes reactive.</td><td>Opening proposal and negotiation sequence.</td></tr></tbody></table></div></div></div></section>
+</main></div><script>
+const options=[{"id": "O1", "name": "2511 70th Ave E - Fife Commerce Center", "city": "Fife, WA", "sf": "255,070 SF direct; 125,000-255,000 SF sublet", "rent": "$0.72 PSF/month NNN sublet; direct withheld", "occ": "60 days / vacant", "clear": "30'", "docks": "72 docks for available block; 131 building total", "drive": "2 drive-ins direct", "owner": "Northwest Building, LLC", "type": "Direct and sublet", "term": "Negotiable / sublet through Aug. 2027", "img": "2511_70th", "lat": 47.239, "lng": -122.346, "take": "Large cross-dock alternative in Fife with immediate port and freeway access. The sublease rent creates a useful market-pressure datapoint even if term is short."}, {"id": "O2", "name": "14021 E Pioneer Way - Pioneer Logistics", "city": "Puyallup, WA", "sf": "211,153 SF", "rent": "Withheld", "occ": "Vacant", "clear": "36'", "docks": "34 exterior", "drive": "2 drive-ins", "owner": "Panattoni", "type": "Direct", "term": "Negotiable", "img": "14021_pioneer", "lat": 47.199, "lng": -122.235, "take": "New 2026 delivery with 36' clear, rail access and trailer parking. Strong leverage option for a modern but smaller requirement."}, {"id": "O3", "name": "80 5th Ave - Bridge Point i5 - Building 1", "city": "Milton, WA", "sf": "166,724-333,448 SF", "rent": "Withheld", "occ": "Vacant", "clear": "Not stated in summary", "docks": "Not stated", "drive": "None", "owner": "Kurv Industrial", "type": "Direct", "term": "Negotiable", "img": "80_5th_333", "lat": 47.252, "lng": -122.315, "take": "Vacant new-construction block near I-5 and Port of Tacoma. Best treated as a competitive tension option rather than a direct like-for-like fit until loading is confirmed."}, {"id": "O4", "name": "80 5th Ave - Bridge Point i5 - Building 2", "city": "Milton, WA", "sf": "239,271-478,542 SF", "rent": "Withheld", "occ": "Vacant", "clear": "40'", "docks": "70 exterior", "drive": "None", "owner": "Kurv Industrial", "type": "Direct", "term": "Negotiable", "img": "80_5th_478", "lat": 47.253, "lng": -122.318, "take": "Large vacant new-construction option with 40' clear and scale above NFI's current footprint. Useful leverage against renewal economics."}, {"id": "O5", "name": "7402-7490 26th St E - 167 Industrial", "city": "Fife, WA", "sf": "100,000-225,972 SF", "rent": "Withheld", "occ": "Vacant", "clear": "32'", "docks": "70 exterior", "drive": "4 drive-ins", "owner": "Ares Management Corporation", "type": "Direct", "term": "Negotiable", "img": "7402_26th", "lat": 47.24, "lng": -122.34, "take": "Vacant direct option with newer vintage and good loading. Potential partial fit depending on NFI's exact required footprint."}, {"id": "O6", "name": "2801 78th Ave E - Fife I-5 Commerce Center", "city": "Fife, WA", "sf": "250,490 SF", "rent": "Withheld", "occ": "Vacant", "clear": "32'", "docks": "63 exterior", "drive": "2 drive-ins", "owner": "BlackRock, Inc.", "type": "Sublet", "term": "Through Dec. 2029", "img": "2801_78th", "lat": 47.242, "lng": -122.337, "take": "Closest size match to NFI's current 257,775 SF. Sublease structure may create pricing flexibility and a credible negotiation alternative."}, {"id": "O7", "name": "2701 142nd Ave E - Sumner Central", "city": "Sumner, WA", "sf": "90,000-427,253 SF", "rent": "Withheld", "occ": "08/2026", "clear": "30'", "docks": "111 available; 120 building total", "drive": "6 drive-ins", "owner": "Clarion Partners", "type": "Direct", "term": "Negotiable", "img": "2701_142nd", "lat": 47.229, "lng": -122.235, "take": "Sumner alternative with scale, cross-load configuration and 2026 availability. Strong local market check against the incumbent building."}]; const comps=[{"id": "C1", "tenant": "Yusen Logistics Co", "addr": "13501 38th Street East", "q": "2025 Q3", "size": "114,000 SF", "type": "Renewal", "term": "5y 3m", "rent": "$0.90", "today": "$1.02", "free": "3 mo", "ti": "$2.08", "lat": 47.221, "lng": -122.257, "asset": "Rainier Park of Industry", "city": "Sumner, WA", "img": "comp_c1", "bldg": "114,320 SF", "clear": "20'", "built": "2006", "docks": "140 exterior", "drive": "None", "owner": "Prologis, Inc.", "tenancy": "Single", "extra": "Truck terminal configuration with substantial trailer parking."}, {"id": "C2", "tenant": "Cabela's", "addr": "1212 Valley Avenue NW", "q": "2025 Q3", "size": "104,786 SF", "type": "Renewal", "term": "5y", "rent": "$0.93", "today": "$1.35", "free": "0 mo", "ti": "As-is", "lat": 47.198, "lng": -122.303, "asset": "IAC Port 167", "city": "Puyallup, WA", "img": "comp_c2", "bldg": "254,176 SF", "clear": "30'", "built": "2014", "docks": "68 exterior", "drive": "1 total", "owner": "PGIM / IAC Properties", "tenancy": "Multiple", "extra": "CoStar notes 143,634 SF available with trailer parking and ESFR sprinklers."}, {"id": "C4", "tenant": "Crane Worldwide Logistics", "addr": "3101 W Valley Highway E", "q": "2024 Q4", "size": "264,344 SF", "type": "New lease", "term": "5y 6m", "rent": "$0.92", "today": "$1.03", "free": "6 mo", "ti": "$1.75", "lat": 47.221, "lng": -122.241, "asset": "Sumner West Logistics", "city": "Sumner, WA", "img": "comp_c4", "bldg": "281,884 SF", "clear": "30'", "built": "2008", "docks": "38 exterior", "drive": "2 total", "owner": "BGO", "tenancy": "Multiple", "extra": "Industrial distribution building with dock-high and grade-level loading."}, {"id": "C5", "tenant": "Amazon.com", "addr": "7449 45th Street Court E", "q": "2023 Q3", "size": "516,746 SF", "type": "Ground", "term": "15y", "rent": "$0.78", "today": "-", "free": "-", "ti": "-", "lat": 47.223, "lng": -122.345, "asset": "7449 45th Street Ct E", "city": "Fife, WA", "img": "comp_c5", "bldg": "516,746 SF", "clear": "36'", "built": "2021", "docks": "121 exterior", "drive": "4 total", "owner": "Ares Management Corporation", "tenancy": "Single", "extra": "Modern bulk distribution building; larger than NFI and an older data point, but useful context."}, {"id": "C6", "tenant": "McLane Company", "addr": "4301 W Valley Highway E", "q": "2022 Q4", "size": "145,812 SF", "type": "Extension", "term": "7y 1m", "rent": "$0.92", "today": "$1.14", "free": "1 mo", "ti": "$1.25", "lat": 47.21, "lng": -122.238, "asset": "Rainier Park of Industry", "city": "Sumner, WA", "img": "comp_c6", "bldg": "506,925 SF", "clear": "30'", "built": "2007", "docks": "116 exterior", "drive": "4 total / 12' x 16' h", "owner": "CenterPoint Properties", "tenancy": "Multiple", "extra": "This comp is in NFI's current building. CoStar also shows 25,000 SF available on sublease through November 2030.", "sameSite": true}]; const imgs={"current_4301": "assets/image_02_0344124d85.jpg", "2511_70th": "assets/image_03_1ff110766d.jpg", "14021_pioneer": "assets/image_04_fa5c8e5545.jpg", "80_5th_333": "assets/image_05_21c6c16d60.jpg", "80_5th_478": "assets/image_06_5a6b180655.jpg", "7402_26th": "assets/image_07_eedda3ccac.jpg", "2801_78th": "assets/image_08_316f0f702b.jpg", "2701_142nd": "assets/image_09_0d08633606.jpg", "comp_c1": "assets/image_10_dcc23e868c.png", "comp_c5": "assets/image_11_57513013dd.png", "comp_c2": "assets/image_12_4da5ace02f.png", "comp_c6": "assets/image_13_c33291c08c.png", "comp_c3": "assets/image_14_b580f79c97.png", "comp_c4": "assets/image_15_e3f06bccd4.png"};
+function show(id){document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.navBtn').forEach(b=>b.classList.toggle('active',b.dataset.target===id));var optionsGroup=document.getElementById('sidebarOptions');var compsGroup=document.getElementById('sidebarComps');if(optionsGroup) optionsGroup.classList.toggle('visible',id==='options');if(compsGroup) compsGroup.classList.toggle('visible',id==='comps');if(id==='prologis' && typeof initPipelineMap==='function'){if(!window.pipelineMap){window.pipelineMap=initPipelineMap();selectPipeline('P01');}setTimeout(()=>{window.pipelineMap.invalidateSize();activatePipelineMarker('P01');},250);}setTimeout(()=>{if(window.optionsMap) optionsMap.invalidateSize(); if(window.compsMap) compsMap.invalidateSize(); if(window.pipelineMap && id==='prologis') pipelineMap.invalidateSize();},150)}document.querySelectorAll('.navBtn').forEach(b=>b.onclick=()=>show(b.dataset.target));var activeBtn=document.querySelector('.navBtn.active');show(activeBtn?activeBtn.dataset.target:'summary');
+
+const CURRENT_SITE={id:'NFI',name:'4301 West Valley Highway East',lat:47.21,lng:-122.238,sf:'257,775 SF occupied · 506,925 SF building',rent:'Current NFI rent reported at $0.92 PSF/month blended'};
+function badgeHtml(label,bg,color='#fff',border='#fff'){return `<div class="mapBadge" style="background:${bg};color:${color};border:2px solid ${border};border-radius:50%;width:34px;height:34px;display:grid;place-items:center;font-weight:900;box-shadow:0 3px 10px rgba(0,0,0,.38);font-size:12px">${label}</div>`;}
+function badgeIcon(label,bg,color='#fff',border='#fff'){return L.divIcon({className:'',html:badgeHtml(label,bg,color,border),iconSize:[34,34],iconAnchor:[17,17]});}
+function addImagery(m){L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Imagery © Esri'}).addTo(m);L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:''}).addTo(m);}
+function addLegend(map,label,color){const legend=L.control({position:'bottomleft'});legend.onAdd=function(){const div=L.DomUtil.create('div','mapLegend');div.innerHTML=`<div class='lgTitle'>Map legend</div><div class='lgRow'><span class='lgSwatch' style='background:#25273A;border-color:#FFDF00'></span><span>NFI current site</span></div><div class='lgRow'><span class='lgSwatch' style='background:${color};border-color:#111'></span><span>${label}</span></div><div class='lgRow'><span class='lgLine'></span><span>5-mile radius</span></div>`;return div;};legend.addTo(map);}
+function popupHtml(item,kind){if(kind==='option'){return `<b>${item.id} · ${item.name}</b><br>${item.sf}<br>${item.rent}<br>${item.city}`;}return `<b>${item.id} · ${item.tenant}</b><br>${item.addr}<br>${item.size} · ${item.type}<br>Starting rent ${item.rent} PSF/month`;}
+function initMap(el, center, markers, color, cb, kind){let m=L.map(el,{scrollWheelZoom:false,zoomControl:true}).setView(center,12);addImagery(m);addLegend(m,kind==='comp'?'Lease comp':'Relocation option',color);const group=L.featureGroup().addTo(m);L.circle([CURRENT_SITE.lat,CURRENT_SITE.lng],{radius:8046,fill:true,fillColor:'#008C95',fillOpacity:.06,color:'#008C95',weight:2,dashArray:'8 8',opacity:.92}).addTo(m);const sameSiteComp=kind==='comp' && markers.some(x=>Math.abs(x.lat-CURRENT_SITE.lat)<0.0002 && Math.abs(x.lng-CURRENT_SITE.lng)<0.0002);const currentLatLng=sameSiteComp?[CURRENT_SITE.lat+0.0042,CURRENT_SITE.lng]:[CURRENT_SITE.lat,CURRENT_SITE.lng];const currentMarker=L.marker(currentLatLng,{icon:badgeIcon('NFI','#25273A','#FFDF00','#111')}).bindPopup(`<b>${CURRENT_SITE.name}</b><br>${CURRENT_SITE.sf}<br>${CURRENT_SITE.rent}`).addTo(group);const store={};markers.forEach(x=>{let lat=x.lat,lng=x.lng;if(kind==='comp' && Math.abs(x.lat-CURRENT_SITE.lat)<0.0002 && Math.abs(x.lng-CURRENT_SITE.lng)<0.0002){lat=x.lat-0.0024;}const marker=L.marker([lat,lng],{icon:badgeIcon(x.id,color,kind==='comp'?'#008C95':'#fff','#111')}).addTo(group).bindPopup(popupHtml(x,kind)).on('click',()=>cb(x.id));store[x.id]=marker;});if(group.getBounds().isValid()){m.fitBounds(group.getBounds().pad(.26),{maxZoom:12,padding:[18,18]});}m._markerStore=store;m._currentMarker=currentMarker;return m;}
+function activateMarker(map,id){if(!map||!map._markerStore)return;Object.values(map._markerStore).forEach(marker=>{const badge=marker.getElement()&&marker.getElement().querySelector('.mapBadge');if(badge)badge.classList.remove('active');});const marker=map._markerStore[id];if(marker){const badge=marker.getElement()&&marker.getElement().querySelector('.mapBadge');if(badge)badge.classList.add('active');marker.openPopup();map.flyTo(marker.getLatLng(),Math.max(map.getZoom(),12),{duration:.35});}}
+function selectOption(id){let o=options.find(x=>x.id===id);document.querySelectorAll('#optionCards .mapCard, #options .mapCard').forEach(c=>c.classList.toggle('active',c.textContent.includes(id)));document.getElementById('optionDetail').innerHTML=`<img src="${imgs[o.img]}"><h3>${o.name}</h3><p style='color:var(--muted);margin-top:-4px'>${o.city}</p><div class='callout'><b>Strategic read:</b> ${o.take}</div><div class='kv'><div><span>Available SF</span><b>${o.sf}</b></div><div><span>Rent</span><b>${o.rent}</b></div><div><span>Occupancy</span><b>${o.occ}</b></div><div><span>Term</span><b>${o.term}</b></div><div><span>Clear height</span><b>${o.clear}</b></div><div><span>Docks</span><b>${o.docks}</b></div><div><span>Drive-ins</span><b>${o.drive}</b></div><div><span>Owner</span><b>${o.owner}</b></div></div>`;activateMarker(window.optionsMap,id);}
+function selectComp(id){let c=comps.find(x=>x.id===id);document.querySelectorAll('#compCards .mapCard, #comps .mapCard').forEach(el=>el.classList.toggle('active',el.textContent.includes(id)));const sameSiteNote=c.sameSite?`<div class='callout' style='margin:0 0 12px 0'><b>Current location note:</b> ${c.tenant} is also in NFI's current building, so the NFI current-location marker is shown just above C6 on the map.</div>`:'';document.getElementById('compDetail').innerHTML=`<img src="${imgs[c.img]}"><h3>${c.tenant}</h3><p style='color:var(--muted);margin-top:-4px'>${c.addr} · ${c.city}</p>${sameSiteNote}<div class='kv'><div><span>Quarter</span><b>${c.q}</b></div><div><span>Size</span><b>${c.size}</b></div><div><span>Type</span><b>${c.type}</b></div><div><span>Term</span><b>${c.term}</b></div><div><span>Starting rent</span><b>${c.rent} PSF/month</b></div><div><span>Est. start today</span><b>${c.today==='-'?'-':c.today+' PSF/month'}</b></div><div><span>Free rent</span><b>${c.free}</b></div><div><span>TI / work value</span><b>${c.ti}</b></div></div><div class='currentSubSectionTitle' style='margin-top:16px'>Building facts</div><div class='kv'><div><span>Asset</span><b>${c.asset}</b></div><div><span>Building / site size</span><b>${c.bldg}</b></div><div><span>Clear height</span><b>${c.clear}</b></div><div><span>Built</span><b>${c.built}</b></div><div><span>Docks</span><b>${c.docks}</b></div><div><span>Drive-ins</span><b>${c.drive}</b></div><div><span>Tenancy</span><b>${c.tenancy}</b></div><div><span>True owner</span><b>${c.owner}</b></div></div><div class='callout' style='margin-top:12px'><b>Property note:</b> ${c.extra}</div><div class='callout' style='margin-top:12px'><b>Use in negotiation:</b> Relevant as market evidence, but should be screened for size, lease structure, vintage and timing before anchoring a renewal position.</div>`;activateMarker(window.compsMap,id);}
+const pipelineData=[{"id": "P01", "idx": 1, "priority": "High", "market": "Near-Sumner / SR-167 corridor", "distance": "6-10 mi", "building": "Auburn 5", "address": "6408 South 287th Street, Auburn, WA - 98001", "city": "Auburn", "tenant": "Young's Market Company, LLC", "leaseEnd": "Jun. 2026", "sf": "287,832 SF", "sfNum": 287832, "signal": "No", "stage": "", "opp": "", "status": "Upcoming/current", "brokers": "", "cls": "", "lat": 47.343, "lng": -122.251, "relevance": "High-priority pipeline target"}, {"id": "P02", "idx": 2, "priority": "High", "market": "Sumner core", "distance": "0-3 mi", "building": "Sumner 1", "address": "3012 142nd Avenue East, Sumner, WA - 98390", "city": "Sumner", "tenant": "Cooper Tire & Rubber Company Inc", "leaseEnd": "Jun. 2026", "sf": "131,483 SF", "sfNum": 131483, "signal": "No", "stage": "", "opp": "", "status": "Upcoming/current", "brokers": "", "cls": "", "lat": 47.25, "lng": -122.223, "relevance": "Closest corridor to NFI \u00b7 High-priority pipeline target"}, {"id": "P03", "idx": 3, "priority": "High", "market": "Fife / Port access corridor", "distance": "8-11 mi", "building": "Fife 16", "address": "3602 Freeman Rd East (Fife DC South), Fife, WA - 98424", "city": "Fife", "tenant": "Miwd Holding Company LLC", "leaseEnd": "Sep. 2026", "sf": "239,805 SF", "sfNum": 239805, "signal": "No", "stage": "Analyze", "opp": "Forklift - Miwd Holding Company LLC - US-Seattle - 239,805 sf", "status": "Upcoming/current", "brokers": "", "cls": "", "lat": 47.239, "lng": -122.344, "relevance": "High-priority pipeline target"}, {"id": "P04", "idx": 4, "priority": "Watch", "market": "Fife / Port access corridor", "distance": "8-11 mi", "building": "Trans-Pacific 6", "address": "4101 Industry Drive E., Fife, WA - 98424", "city": "Fife", "tenant": "Savers Recycling, Inc.", "leaseEnd": "Feb. 2027", "sf": "93,146 SF", "sfNum": 93146, "signal": "No", "stage": "", "opp": "", "status": "Upcoming/current", "brokers": "", "cls": "", "lat": 47.236, "lng": -122.333, "relevance": "Useful landlord / demand intelligence point"}, {"id": "P05", "idx": 5, "priority": "High", "market": "Sumner core", "distance": "0-3 mi", "building": "Sumner 2", "address": "3711 142nd Avenue East, Sumner, WA - 98390", "city": "Sumner", "tenant": "Amazon.com, Inc.", "leaseEnd": "Jun. 2027", "sf": "370,087 SF", "sfNum": 370087, "signal": "Yes", "stage": "", "opp": "", "status": "Upcoming/current", "brokers": "", "cls": "", "lat": 47.246, "lng": -122.222, "relevance": "Closest corridor to NFI \u00b7 Potential 3PL / outsourced logistics lead \u00b7 High-priority pipeline target"}, {"id": "P06", "idx": 6, "priority": "High", "market": "Sumner core", "distance": "0-3 mi", "building": "Sumner 5", "address": "3603 142nd Ave East, Sumner, WA - 98390", "city": "Sumner", "tenant": "Amazon.com, Inc.", "leaseEnd": "Jun. 2027", "sf": "220,433 SF", "sfNum": 220433, "signal": "Yes", "stage": "", "opp": "", "status": "Upcoming/current", "brokers": "", "cls": "", "lat": 47.243, "lng": -122.222, "relevance": "Closest corridor to NFI \u00b7 Potential 3PL / outsourced logistics lead \u00b7 High-priority pipeline target"}, {"id": "P07", "idx": 7, "priority": "High", "market": "Sumner core", "distance": "0-3 mi", "building": "Sumner 9", "address": "3324 142nd Ave East, Sumner, WA - 98390", "city": "Sumner", "tenant": "Keurig Green Mountain, Inc.", "leaseEnd": "Aug. 2027", "sf": "263,800 SF", "sfNum": 263800, "signal": "No", "stage": "", "opp": "", "status": "Upcoming/current", "brokers": "", "cls": "", "lat": 47.239, "lng": -122.222, "relevance": "Closest corridor to NFI \u00b7 High-priority pipeline target"}, {"id": "P08", "idx": 8, "priority": "High", "market": "Sumner core", "distance": "0-3 mi", "building": "Sumner 10", "address": "3418 142nd Ave East, Sumner, WA - 98390", "city": "Sumner", "tenant": "Keurig Green Mountain, Inc.", "leaseEnd": "Aug. 2027", "sf": "127,500 SF", "sfNum": 127500, "signal": "No", "stage": "", "opp": "", "status": "Upcoming/current", "brokers": "", "cls": "", "lat": 47.241, "lng": -122.222, "relevance": "Closest corridor to NFI \u00b7 High-priority pipeline target"}, {"id": "P09", "idx": 9, "priority": "Watch", "market": "Sumner core", "distance": "0-3 mi", "building": "Sumner 10", "address": "3418 142nd Ave East, Sumner, WA - 98390", "city": "Sumner", "tenant": "Keurig Green Mountain, Inc.", "leaseEnd": "Aug. 2027", "sf": "96,500 SF", "sfNum": 96500, "signal": "No", "stage": "", "opp": "", "status": "Upcoming/current", "brokers": "", "cls": "", "lat": 47.2422, "lng": -122.2208, "relevance": "Closest corridor to NFI"}, {"id": "P10", "idx": 10, "priority": "High", "market": "Sumner core", "distance": "0-3 mi", "building": "Sumner 19", "address": "4095 142nd Avenue East (White River North), Sumner, WA - 98390", "city": "Sumner", "tenant": "Mattress Firm Holding Corp", "leaseEnd": "Sep. 2027", "sf": "132,525 SF", "sfNum": 132525, "signal": "No", "stage": "", "opp": "", "status": "Upcoming/current", "brokers": "", "cls": "", "lat": 47.232, "lng": -122.218, "relevance": "Closest corridor to NFI \u00b7 High-priority pipeline target"}, {"id": "P11", "idx": 11, "priority": "Watch", "market": "Sumner core", "distance": "0-3 mi", "building": "Sumner 17", "address": "14810 Puyallup Street, Sumner, WA - 98390", "city": "Sumner", "tenant": "Diono, L.L.C.", "leaseEnd": "Sep. 2027", "sf": "99,140 SF", "sfNum": 99140, "signal": "No", "stage": "", "opp": "", "status": "Upcoming/current", "brokers": "", "cls": "", "lat": 47.227, "lng": -122.215, "relevance": "Closest corridor to NFI"}, {"id": "P12", "idx": 12, "priority": "High", "market": "Sumner core", "distance": "0-3 mi", "building": "Sumner 19", "address": "4095 142nd Avenue East (White River North), Sumner, WA - 98390", "city": "Sumner", "tenant": "Alliance Door Products, L.L.C.", "leaseEnd": "Oct. 2027", "sf": "118,912 SF", "sfNum": 118912, "signal": "No", "stage": "", "opp": "", "status": "Upcoming/current", "brokers": "", "cls": "", "lat": 47.2332, "lng": -122.2168, "relevance": "Closest corridor to NFI \u00b7 High-priority pipeline target"}, {"id": "P13", "idx": 13, "priority": "High", "market": "Near-Sumner / SR-167 corridor", "distance": "3-6 mi", "building": "Puyallup", "address": "1601 Industrial Park Way, Puyallup, WA - 98371", "city": "Puyallup", "tenant": "SHELTERLOGIC LLC", "leaseEnd": "Nov. 2027", "sf": "141,500 SF", "sfNum": 141500, "signal": "No", "stage": "Propose", "opp": "Racking - SHELTERLOGIC LLC - US-Seattle - 141,500 sf | Lighting - SHELTERLOGIC LLC - US-Seattle - 141,500 sf", "status": "Upcoming/current", "brokers": "", "cls": "", "lat": 47.192, "lng": -122.289, "relevance": "High-priority pipeline target"}, {"id": "P14", "idx": 14, "priority": "Medium", "market": "Near-Sumner / SR-167 corridor", "distance": "5-7 mi", "building": "Algona 3", "address": "840 Industry Drive North, Algona, WA - 98001", "city": "Algona", "tenant": "Behr Process Corporation", "leaseEnd": "Jan. 2028", "sf": "109,736 SF", "sfNum": 109736, "signal": "No", "stage": "", "opp": "", "status": "Upcoming/current", "brokers": "", "cls": "", "lat": 47.286, "lng": -122.252, "relevance": "Useful landlord / demand intelligence point"}, {"id": "P15", "idx": 15, "priority": "Watch", "market": "Fife / Port access corridor", "distance": "8-11 mi", "building": "Fife DC 1", "address": "4512 70th Street E, Fife, WA - 98424-3710", "city": "Fife", "tenant": "Acme Delivery Service, Inc.", "leaseEnd": "Jan. 2028", "sf": "85,784 SF", "sfNum": 85784, "signal": "Yes", "stage": "", "opp": "", "status": "Upcoming/current", "brokers": "", "cls": "", "lat": 47.246, "lng": -122.345, "relevance": "Potential 3PL / outsourced logistics lead"}, {"id": "P16", "idx": 16, "priority": "High", "market": "Sumner core", "distance": "0-3 mi", "building": "Sumner", "address": "14301 24th Street, Sumner, WA - 98390", "city": "Sumner", "tenant": "Expeditors International of Washington, Inc.", "leaseEnd": "Mar. 2028", "sf": "292,848 SF", "sfNum": 292848, "signal": "Yes", "stage": "", "opp": "", "status": "Upcoming/current", "brokers": "", "cls": "", "lat": 47.245, "lng": -122.201, "relevance": "Closest corridor to NFI \u00b7 Potential 3PL / outsourced logistics lead \u00b7 High-priority pipeline target"}, {"id": "P17", "idx": 17, "priority": "Medium", "market": "Sumner core", "distance": "0-3 mi", "building": "Sumner 18", "address": "4123 142nd Avenue East, Sumner, WA - 98390", "city": "Sumner", "tenant": "Keystone Automotive Industries, Inc.", "leaseEnd": "Jun. 2028", "sf": "290,368 SF", "sfNum": 290368, "signal": "No", "stage": "", "opp": "", "status": "Upcoming/current", "brokers": "", "cls": "", "lat": 47.231, "lng": -122.217, "relevance": "Closest corridor to NFI"}, {"id": "P18", "idx": 18, "priority": "Medium", "market": "Sumner core", "distance": "0-3 mi", "building": "Sumner 22", "address": "3401 West Valley Hwy, Sumner, WA - 98390", "city": "Sumner", "tenant": "Dsj Acquisition, Inc.", "leaseEnd": "Jul. 2028", "sf": "263,168 SF", "sfNum": 263168, "signal": "No", "stage": "", "opp": "", "status": "Upcoming/current", "brokers": "", "cls": "", "lat": 47.212, "lng": -122.239, "relevance": "Closest corridor to NFI"}, {"id": "P19", "idx": 19, "priority": "High", "market": "Fife / Port access corridor", "distance": "8-11 mi", "building": "Fife 17", "address": "3424 Freeman Rd East, Fife, WA - 98424", "city": "Fife", "tenant": "UPS Supply Chain Solutions, Inc", "leaseEnd": "May. 2029", "sf": "152,325 SF", "sfNum": 152325, "signal": "Yes", "stage": "", "opp": "", "status": "Upcoming/current", "brokers": "", "cls": "", "lat": 47.238, "lng": -122.349, "relevance": "Potential 3PL / outsourced logistics lead \u00b7 High-priority pipeline target"}, {"id": "P20", "idx": 20, "priority": "Medium", "market": "Sumner core", "distance": "0-3 mi", "building": "Sumner 27", "address": "1510 Puyallup Street, Sumner, WA - 98390", "city": "Sumner", "tenant": "Rexel USA, Inc.", "leaseEnd": "Jul. 2029", "sf": "190,042 SF", "sfNum": 190042, "signal": "No", "stage": "", "opp": "", "status": "Upcoming/current", "brokers": "", "cls": "", "lat": 47.229, "lng": -122.214, "relevance": "Closest corridor to NFI"}, {"id": "P21", "idx": 21, "priority": "Watch", "market": "Near-Sumner / SR-167 corridor", "distance": "6-10 mi", "building": "Auburn 6", "address": "101 Western Street, Auburn, WA - 98001", "city": "Auburn", "tenant": "Leonard's Metal, Inc.", "leaseEnd": "Jun. 2030", "sf": "80,000 SF", "sfNum": 80000, "signal": "No", "stage": "", "opp": "", "status": "Upcoming/current", "brokers": "", "cls": "", "lat": 47.304, "lng": -122.246, "relevance": "Useful landlord / demand intelligence point"}, {"id": "P22", "idx": 22, "priority": "Medium", "market": "Sumner core", "distance": "0-3 mi", "building": "Sumner 20", "address": "13610 152nd St E, Sumner, WA - 98390", "city": "Sumner", "tenant": "Pacific Crest Industries, Inc", "leaseEnd": "Mar. 2031", "sf": "185,015 SF", "sfNum": 185015, "signal": "No", "stage": "", "opp": "", "status": "Upcoming/current", "brokers": "", "cls": "", "lat": 47.223, "lng": -122.208, "relevance": "Closest corridor to NFI"}];
+function pipelineIcon(label, priority){const colors={high:'#315ba8',medium:'#6b7280',watch:'#008C95'};const bg=colors[String(priority).toLowerCase()]||'#315ba8';return L.divIcon({className:'',html:`<div class="pipelineBadge" style="background:${bg};color:#fff;border:2px solid #fff;border-radius:50%;width:34px;height:34px;display:grid;place-items:center;font-weight:900;box-shadow:0 3px 10px rgba(0,0,0,.38);font-size:11px">${label}</div>`,iconSize:[34,34],iconAnchor:[17,17]});}
+function pipelineLegend(map){const legend=L.control({position:'bottomleft'});legend.onAdd=function(){const div=L.DomUtil.create('div','mapLegend');div.innerHTML=`<div class='lgTitle'>Map legend</div><div class='lgRow'><span class='lgSwatch' style='background:#25273A;border-color:#FFDF00'></span><span>NFI current site</span></div><div class='lgRow'><span class='lgSwatch' style='background:#315ba8;border-color:#111'></span><span>High priority</span></div><div class='lgRow'><span class='lgSwatch' style='background:#6b7280;border-color:#111'></span><span>Medium priority</span></div><div class='lgRow'><span class='lgSwatch' style='background:#008C95;border-color:#111'></span><span>Watch</span></div><div class='lgRow'><span class='lgLine'></span><span>Approx. 5-mile radius context</span></div>`;return div;};legend.addTo(map);}
+function initPipelineMap(){let m=L.map('prologisMap',{scrollWheelZoom:false,zoomControl:true}).setView([CURRENT_SITE.lat+0.02,CURRENT_SITE.lng-0.015],11);addImagery(m);pipelineLegend(m);const group=L.featureGroup().addTo(m);L.circle([CURRENT_SITE.lat,CURRENT_SITE.lng],{radius:8046,fill:true,fillColor:'#008C95',fillOpacity:.05,color:'#008C95',weight:2,dashArray:'8 8',opacity:.92}).addTo(m);const currentMarker=L.marker([CURRENT_SITE.lat,CURRENT_SITE.lng],{icon:badgeIcon('NFI','#25273A','#FFDF00','#111')}).bindPopup(`<b>${CURRENT_SITE.name}</b><br>${CURRENT_SITE.sf}<br>NFI current location`).addTo(group);const store={};pipelineData.forEach(rec=>{const marker=L.marker([rec.lat,rec.lng],{icon:pipelineIcon(rec.id.slice(1),rec.priority)}).bindPopup(`<b>${rec.tenant}</b><br>${rec.address}<br>${rec.sf} · ${rec.leaseEnd}`).addTo(group).on('click',()=>selectPipeline(rec.id));store[rec.id]=marker;});if(group.getBounds().isValid())m.fitBounds(group.getBounds().pad(.22),{maxZoom:11,padding:[18,18]});m._markerStore=store;m._currentMarker=currentMarker;return m;}
+function activatePipelineMarker(id){if(!window.pipelineMap||!window.pipelineMap._markerStore)return;Object.values(window.pipelineMap._markerStore).forEach(marker=>{const badge=marker.getElement()&&marker.getElement().querySelector('.pipelineBadge');if(badge)badge.classList.remove('active');});const marker=window.pipelineMap._markerStore[id];if(marker){const badge=marker.getElement()&&marker.getElement().querySelector('.pipelineBadge');if(badge)badge.classList.add('active');marker.openPopup();window.pipelineMap.flyTo(marker.getLatLng(),Math.max(window.pipelineMap.getZoom(),11),{duration:.35});}}
+function selectPipeline(id){let p=pipelineData.find(x=>x.id===id);document.querySelectorAll('#pipelineCards .mapCard').forEach(el=>el.classList.toggle('active',el.dataset.pid===id));const pri=String(p.priority).toLowerCase();const signalChip=p.signal==='Yes'?`<span class='pill'>3PL signal</span>`:'';const signalCallout=p.signal==='Yes'?`<div class='callout' style='margin-top:12px'><b>3PL relevance:</b> This occupier has a clear logistics / distribution signal and could be a relevant customer or lead source for NFI's 3PL pipeline.</div>`:'';const oppCallout=p.opp?`<div class='callout' style='margin-top:12px'><b>Related opportunity note:</b> ${p.opp}</div>`:'';const teamInfo=(p.brokers||p.cls)?`<div class='callout' style='margin-top:12px'><b>Source contacts:</b> ${p.brokers?`Broker(s): ${p.brokers}`:''}${(p.brokers&&p.cls)?' · ':''}${p.cls?`CLS account officer(s): ${p.cls}`:''}</div>`:'';document.getElementById('pipelineDetail').innerHTML=`<div class='pipelineDetailTitle'><span class='proPriority ${pri}'>${p.priority}</span></div><h3>${p.tenant}</h3><p style='color:var(--muted);margin:0 0 10px 0'>${p.address}</p><div class='pipelineSummaryStrip'><span class='pill'>${p.building}</span><span class='pill'>${p.sf}</span><span class='pill'>Lease end ${p.leaseEnd}</span><span class='pill'>${p.distance}</span>${signalChip}</div><div class='kv'><div><span>Market area</span><b>${p.market}</b></div><div><span>Status</span><b>${p.status||'Upcoming/current'}</b></div><div><span>Priority</span><b>${p.priority}</b></div><div><span>NFI lens</span><b>${p.relevance}</b></div><div><span>Building</span><b>${p.building}</b></div><div><span>Approx. distance</span><b>${p.distance}</b></div><div><span>Lease end</span><b>${p.leaseEnd}</b></div><div><span>3PL signal</span><b>${p.signal==='Yes'?'Yes':'No'}</b></div></div><div class='callout' style='margin-top:14px'><b>Why it matters for NFI:</b> ${p.relevance}. This expiration can help NFI think about future customer demand, nearby market movement and Prologis landlord intelligence.</div>${signalCallout}${oppCallout}${teamInfo}`;activatePipelineMarker(id);}
+window.addEventListener('load',()=>{window.optionsMap=initMap('optionsMap',[CURRENT_SITE.lat,CURRENT_SITE.lng],options,'#315ba8',selectOption,'option');window.compsMap=initMap('compsMap',[CURRENT_SITE.lat,CURRENT_SITE.lng],comps,'#ffffff',selectComp,'comp');selectOption('O6');selectComp('C4');setTimeout(()=>{if(window.optionsMap)window.optionsMap.invalidateSize();if(window.compsMap)window.compsMap.invalidateSize();if(window.pipelineMap)window.pipelineMap.invalidateSize();},250);});
+</script></body></html>
